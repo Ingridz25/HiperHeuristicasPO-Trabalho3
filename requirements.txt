@@ -1,0 +1,56 @@
+# Dependências do Projeto: Hiperheurística para o Problema da Mochila
+# Pesquisa Operacional - Ciência da Computação
+#
+# Para instalar: pip install -r requirements.txt
+#
+# Nota: Este projeto usa apenas bibliotecas padrão do Python!
+# Os pacotes abaixo são OPCIONAIS, para visualização e análise.
+
+# ========================================
+# BIBLIOTECAS PADRÃO (já incluídas no Python)
+# ========================================
+# - random: geração de números aleatórios
+# - time: medição de tempo
+# - math: funções matemáticas (exp, log)
+# - csv: leitura/escrita de arquivos CSV
+# - json: leitura/escrita de arquivos JSON
+# - os: operações com sistema de arquivos
+# - argparse: parsing de argumentos de linha de comando
+# - datetime: manipulação de datas/horas
+
+# ========================================
+# BIBLIOTECAS OPCIONAIS (para análise avançada)
+# ========================================
+
+# Para visualização de gráficos (opcional)
+# matplotlib>=3.5.0
+
+# Para análise de dados (opcional)
+# pandas>=1.4.0
+
+# Para notebooks Jupyter (opcional)
+# jupyter>=1.0.0
+# notebook>=6.4.0
+
+# Para testes estatísticos (opcional)
+# scipy>=1.8.0
+
+# ========================================
+# COMO EXECUTAR O PROJETO
+# ========================================
+#
+# 1. Modo demonstração (recomendado para começar):
+#    python main.py
+#
+# 2. Com instância específica:
+#    python main.py --instance instances/pequena_10.txt
+#
+# 3. Experimento completo:
+#    python main.py --experiment --runs 10
+#
+# 4. Testar módulos individualmente:
+#    python heuristics.py
+#    python metaheuristic.py
+#    python hyperheuristic.py
+#    python experiments.py
+
