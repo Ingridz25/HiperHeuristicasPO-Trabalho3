@@ -6,18 +6,18 @@ Heurísticas de Baixo Nível para o Problema da Mochila
 
 Este módulo contém TODAS as heurísticas exigidas para o trabalho:
 
-📦 HEURÍSTICAS CONSTRUTIVAS (criam soluções do zero):
-  - greedy_value()     → Prioriza itens com MAIOR VALOR
-  - greedy_weight()    → Prioriza itens com MENOR PESO
-  - greedy_ratio()     → Prioriza itens com MELHOR razão valor/peso
-  - greedy_random()    → Construção semi-aleatória (para GRASP)
+HEURISTICAS CONSTRUTIVAS (criam solucoes do zero):
+  - greedy_value()     -> Prioriza itens com MAIOR VALOR
+  - greedy_weight()    -> Prioriza itens com MENOR PESO
+  - greedy_ratio()     -> Prioriza itens com MELHOR razao valor/peso
+  - greedy_random()    -> Construcao semi-aleatoria (para GRASP)
 
-🔧 HEURÍSTICAS DE MELHORIA (melhoram soluções existentes):
-  - local_search_1flip()  → Testa inverter cada item
-  - local_search_2swap()  → Troca um item dentro por um fora
-  - remove_worst()        → Remove item com pior custo-benefício
+HEURISTICAS DE MELHORIA (melhoram solucoes existentes):
+  - local_search_1flip()  -> Testa inverter cada item
+  - local_search_2swap()  -> Troca um item dentro por um fora
+  - remove_worst()        -> Remove item com pior custo-beneficio
 
-💡 CONCEITO: Heurísticas Construtivas vs. de Melhoria
+CONCEITO: Heuristicas Construtivas vs. de Melhoria
 -----------------------------------------------------
 Construtivas: Constroem uma solução "do zero", item por item.
 De Melhoria: Recebem uma solução e tentam melhorá-la.
@@ -38,12 +38,12 @@ def greedy_value(instance):
     """
     Heurística Gulosa por VALOR.
     
-    💡 ESTRATÉGIA: "Quero os itens mais valiosos!"
+    ESTRATEGIA: "Quero os itens mais valiosos!"
     
     Ordena os itens do mais valioso ao menos valioso.
     Para cada item (em ordem), adiciona se couber na mochila.
     
-    ⚠️ LIMITAÇÃO: Pode pegar um item muito valioso mas pesado,
+    LIMITACAO: Pode pegar um item muito valioso mas pesado,
     deixando espaço insuficiente para vários itens menores que
     juntos teriam valor maior.
     
@@ -88,15 +88,15 @@ def greedy_weight(instance):
     """
     Heurística Gulosa por PESO (menor peso primeiro).
     
-    💡 ESTRATÉGIA: "Quero caber o máximo de itens possível!"
+    ESTRATEGIA: "Quero caber o maximo de itens possivel!"
     
     Ordena os itens do mais leve ao mais pesado.
     Adiciona itens enquanto couberem.
     
-    💡 Esta estratégia tende a colocar MUITOS itens na mochila,
+    Esta estrategia tende a colocar MUITOS itens na mochila,
     o que pode ser bom se os valores são similares.
     
-    ⚠️ LIMITAÇÃO: Pode pegar muitos itens leves de baixo valor,
+    LIMITACAO: Pode pegar muitos itens leves de baixo valor,
     ignorando um item pesado mas muito valioso.
     
     Parâmetros:
@@ -135,12 +135,12 @@ def greedy_ratio(instance):
     """
     Heurística Gulosa por RAZÃO VALOR/PESO.
     
-    💡 ESTRATÉGIA: "Quero o melhor custo-benefício!"
+    ESTRATEGIA: "Quero o melhor custo-beneficio!"
     
     Esta é geralmente a MELHOR heurística gulosa para a mochila.
     Prioriza itens que dão mais "valor por quilo".
     
-    📚 CONCEITO: A razão valor/peso representa a "eficiência"
+    CONCEITO: A razao valor/peso representa a "eficiencia"
     de cada item. Um item com razão 2.0 dá 2 unidades de valor
     para cada unidade de peso que ocupa.
     
@@ -180,12 +180,12 @@ def greedy_random(instance, alpha=0.3):
     """
     Heurística Gulosa Aleatorizada (Semi-Greedy / GRASP Construction).
     
-    💡 ESTRATÉGIA: "Escolho entre os melhores, mas com aleatoriedade!"
+    ESTRATEGIA: "Escolho entre os melhores, mas com aleatoriedade!"
     
     Em vez de sempre pegar o "melhor" item, escolhe aleatoriamente
     entre os melhores candidatos (Lista Restrita de Candidatos - RCL).
     
-    📚 CONCEITO: Esta aleatoriedade controlada permite gerar
+    CONCEITO: Esta aleatoriedade controlada permite gerar
     soluções DIFERENTES a cada execução, o que é essencial
     para metaheurísticas como GRASP.
     
@@ -258,7 +258,7 @@ def local_search_1flip(solution):
     """
     Busca Local com movimento 1-Flip.
     
-    💡 ESTRATÉGIA: "E se eu inverter UM item?"
+    ESTRATEGIA: "E se eu inverter UM item?"
     
     Testa inverter cada item:
     - Se item está na mochila → remove
@@ -266,9 +266,9 @@ def local_search_1flip(solution):
     
     Retorna a PRIMEIRA melhoria encontrada (First Improvement).
     
-    📚 CONCEITO: Vizinhança
+    CONCEITO: Vizinhanca
     -----------------------
-    A "vizinhança" de uma solução são todas as soluções que
+    A "vizinhanca" de uma solucao sao todas as solucoes que
     podemos alcançar com UM movimento. Aqui, o movimento é
     inverter um bit (0→1 ou 1→0).
     
@@ -336,13 +336,13 @@ def local_search_2swap(solution):
     """
     Busca Local com movimento 2-Swap (troca).
     
-    💡 ESTRATÉGIA: "E se eu trocar um item dentro por um fora?"
+    ESTRATEGIA: "E se eu trocar um item dentro por um fora?"
     
     Remove um item que está na mochila e adiciona outro
     que estava fora. Isso permite escapar de situações onde
     1-flip não consegue melhorar.
     
-    📚 CONCEITO: Vizinhança mais ampla
+    CONCEITO: Vizinhanca mais ampla
     ----------------------------------
     A vizinhança do 2-swap é MAIOR que a do 1-flip.
     Isso significa mais chances de encontrar melhorias,
@@ -387,13 +387,13 @@ def remove_worst(solution):
     """
     Remove o item com PIOR razão valor/peso.
     
-    💡 ESTRATÉGIA: "Quem está ocupando espaço sem merecer?"
+    ESTRATEGIA: "Quem esta ocupando espaco sem merecer?"
     
     Identifica o item na mochila que tem a pior razão valor/peso
     e o remove. Isso libera capacidade para potencialmente
     adicionar itens melhores depois.
     
-    ⚠️ Esta heurística sempre PIORA o valor imediato!
+    ATENCAO: Esta heuristica sempre PIORA o valor imediato!
     Ela deve ser usada como parte de uma estratégia maior
     (como no Simulated Annealing) que permite pioras temporárias.
     
@@ -427,7 +427,7 @@ def fill_remaining(solution):
     """
     Tenta preencher a capacidade restante com itens viáveis.
     
-    💡 ESTRATÉGIA: "Sobrou espaço? Vamos aproveitar!"
+    ESTRATEGIA: "Sobrou espaco? Vamos aproveitar!"
     
     Ordena itens não selecionados por razão valor/peso
     e adiciona enquanto couber.

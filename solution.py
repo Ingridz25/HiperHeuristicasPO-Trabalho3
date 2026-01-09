@@ -7,7 +7,7 @@ Representação de Soluções para o Problema da Mochila
 Este módulo contém a classe que representa uma solução
 (quais itens foram escolhidos para a mochila).
 
-💡 CONCEITO: Representação de Solução
+CONCEITO: Representacao de Solucao
 -------------------------------------
 Usamos um vetor binário (lista de 0s e 1s) para representar
 quais itens foram escolhidos:
@@ -58,7 +58,7 @@ class Solution:
         """
         Recalcula o valor e peso totais da solução.
         
-        ⚠️ IMPORTANTE: Sempre chame este método após modificar self.items!
+        IMPORTANTE: Sempre chame este metodo apos modificar self.items!
         
         A função percorre todos os itens e soma os valores/pesos
         dos itens que estão na mochila (items[i] == 1).
@@ -82,7 +82,7 @@ class Solution:
         """
         Verifica se a solução é viável (respeita a capacidade).
         
-        💡 Uma solução é INVIÁVEL quando o peso total dos itens
+        Uma solucao e INVIAVEL quando o peso total dos itens
         selecionados ultrapassa a capacidade da mochila.
         
         Retorna:
@@ -96,7 +96,7 @@ class Solution:
         """
         Cria uma cópia independente desta solução.
         
-        💡 Por que precisamos copiar?
+        Por que precisamos copiar?
         Quando fazemos busca local, queremos testar modificações
         sem perder a solução original. Se fizermos s2 = s1, ambas
         apontam para o mesmo objeto! Precisamos de uma cópia real.
@@ -155,7 +155,7 @@ class Solution:
         """
         Inverte o estado de um item (0→1 ou 1→0).
         
-        💡 Esta operação é muito usada em buscas locais!
+        Esta operacao e muito usada em buscas locais!
         """
         self.items[index] = 1 - self.items[index]
         self.evaluate()
@@ -197,7 +197,7 @@ class Solution:
         """
         Calcula o gap em relação ao ótimo conhecido.
         
-        💡 O GAP nos diz quão longe estamos da solução perfeita.
+        O GAP nos diz quao longe estamos da solucao perfeita.
         Gap = 0% significa que encontramos o ótimo!
         
         Fórmula: gap = (ótimo - encontrado) / ótimo * 100
@@ -236,7 +236,7 @@ def create_random_solution(instance):
     """
     Cria uma solução aleatória viável.
     
-    💡 Útil para inicialização de metaheurísticas!
+    Util para inicializacao de metaheuristicas!
     
     Parâmetros:
     -----------

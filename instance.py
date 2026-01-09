@@ -7,7 +7,7 @@ Representação e Leitura de Instâncias do Problema da Mochila
 Este módulo contém a classe que representa uma instância do
 Problema da Mochila Binária (0/1 Knapsack Problem).
 
-💡 CONCEITO: O Problema da Mochila Binária
+CONCEITO: O Problema da Mochila Binaria
 ------------------------------------------
 Imagine que você tem uma mochila com capacidade limitada de peso.
 Você tem vários itens, cada um com um peso e um valor.
@@ -81,7 +81,7 @@ class KnapsackInstance:
         """
         Lê uma instância a partir de um arquivo no formato OR-Library.
         
-        📚 Formato OR-Library:
+        Formato OR-Library:
         ----------------------
         Linha 1: n capacidade
         Linha 2 em diante: valor peso (um item por linha)
@@ -134,7 +134,7 @@ class KnapsackInstance:
         """
         Calcula a razão valor/peso de um item.
         
-        💡 Por que isso é útil?
+        Por que isso e util?
         A razão valor/peso nos diz o "custo-benefício" de cada item.
         Um item com razão alta nos dá muito valor por unidade de peso.
         

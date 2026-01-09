@@ -7,7 +7,7 @@ Metaheurísticas para o Problema da Mochila
 Este módulo implementa metaheurísticas que utilizam as heurísticas
 de baixo nível como "operadores" internos.
 
-📚 CONCEITO: O que é uma Metaheurística?
+CONCEITO: O que e uma Metaheuristica?
 -----------------------------------------
 Uma metaheurística é um "algoritmo de alto nível" que CONTROLA
 outros algoritmos (heurísticas) para explorar o espaço de busca.
@@ -41,11 +41,11 @@ def hill_climbing(initial_solution, max_iterations=100, verbose=False):
     """
     Hill Climbing básico (subida de encosta).
     
-    💡 ESTRATÉGIA: "Sempre vá para cima, pare quando não der mais"
+    ESTRATEGIA: "Sempre va para cima, pare quando nao der mais"
     
     Aplica busca local repetidamente até não haver melhoria.
     
-    ⚠️ LIMITAÇÃO: Fica preso em ÓTIMOS LOCAIS - pontos que são
+    LIMITACAO: Fica preso em OTIMOS LOCAIS - pontos que sao
     melhores que todos os vizinhos, mas não são o melhor global.
     
     Parâmetros:
@@ -83,12 +83,12 @@ def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbo
     """
     Hill Climbing com Reinício Aleatório.
     
-    💡 ESTRATÉGIA: "Ficou preso? Começa de novo em outro lugar!"
+    ESTRATEGIA: "Ficou preso? Comeca de novo em outro lugar!"
     
     Executa múltiplas vezes o Hill Climbing, cada vez começando
     de uma solução aleatória diferente. Guarda a melhor de todas.
     
-    📚 CONCEITO: Reinício (Restart)
+    CONCEITO: Reinicio (Restart)
     -------------------------------
     Como o HC básico fica preso em ótimos locais, a ideia é:
     1. Rodar HC partindo de um ponto aleatório
@@ -148,9 +148,9 @@ def simulated_annealing(instance,
     """
     Simulated Annealing (Recozimento Simulado).
     
-    💡 ESTRATÉGIA: "No início aceito pioras, depois fico mais exigente"
+    ESTRATEGIA: "No inicio aceito pioras, depois fico mais exigente"
     
-    📚 CONCEITO: A Analogia do Recozimento
+    CONCEITO: A Analogia do Recozimento
     --------------------------------------
     O nome vem da metalurgia! Quando você aquece um metal e deixa
     esfriar LENTAMENTE, os átomos se arranjam de forma ordenada,
@@ -185,7 +185,7 @@ def simulated_annealing(instance,
     Solution
         Melhor solução encontrada.
     
-    💡 Dica de parâmetros:
+    Dica de parametros:
     - Problema pequeno (<100 itens): initial_temp=100, cooling_rate=0.9
     - Problema médio: initial_temp=1000, cooling_rate=0.95
     - Problema grande: initial_temp=5000, cooling_rate=0.99
@@ -303,9 +303,9 @@ def grasp(instance, max_iterations=100, alpha=0.3, verbose=False):
     """
     GRASP - Greedy Randomized Adaptive Search Procedure.
     
-    💡 ESTRATÉGIA: "Construa várias soluções semi-aleatórias e melhore cada uma"
+    ESTRATEGIA: "Construa varias solucoes semi-aleatorias e melhore cada uma"
     
-    📚 CONCEITO: GRASP em duas fases
+    CONCEITO: GRASP em duas fases
     --------------------------------
     Fase 1 (Construção): Cria solução com heurística gulosa aleatorizada
     Fase 2 (Melhoria): Aplica busca local na solução construída

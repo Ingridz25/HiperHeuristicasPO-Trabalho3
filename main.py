@@ -249,11 +249,6 @@ def run_demo():
     print("\n" + "=" * 70)
     print("[OK] DEMONSTRACAO CONCLUIDA!")
     print("=" * 70)
-    print("\nProximos passos:")
-    print("1. Execute com instancias maiores da OR-Library")
-    print("2. Rode experimentos com multiplas execucoes (--experiment)")
-    print("3. Analise os arquivos CSV/JSON gerados")
-    print("4. Prepare o relatorio tecnico\n")
 
 
 def run_with_instance(instance_path, verbose=True):

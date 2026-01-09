@@ -4,7 +4,7 @@ MÓDULO: hyperheuristic.py
 Hiperheurística de Seleção para o Problema da Mochila
 ===========================================================
 
-📚 CONCEITO: O que é uma Hiperheurística?
+CONCEITO: O que e uma Hiperheuristica?
 -----------------------------------------
 Uma hiperheurística é um "algoritmo de nível mais alto" que
 CONTROLA A SELEÇÃO de outras heurísticas.
@@ -21,7 +21,7 @@ Mecanismos de Seleção implementados:
 2. Epsilon-Greedy (Exploração vs Exploitação)
 3. Aprendizado por Reforço Simples (Reinforcement Learning)
 
-📖 Leitura recomendada:
+Leitura recomendada:
 - Burke et al. "Hyper-heuristics: A survey of the state of the art"
   https://doi.org/10.1016/j.ejor.2012.10.039
 """
@@ -180,7 +180,7 @@ class RouletteWheelHH(HyperHeuristic):
     """
     Hiperheurística com seleção por Roleta Ponderada.
     
-    💡 CONCEITO: Roleta Ponderada
+    CONCEITO: Roleta Ponderada
     -----------------------------
     Imagine uma roleta de cassino, mas onde cada fatia tem
     tamanho proporcional ao score da heurística.
@@ -273,7 +273,7 @@ class EpsilonGreedyHH(HyperHeuristic):
     """
     Hiperheurística com seleção Epsilon-Greedy.
     
-    💡 CONCEITO: Exploração vs Exploitação (Explore vs Exploit)
+    CONCEITO: Exploracao vs Exploitacao (Explore vs Exploit)
     -----------------------------------------------------------
     Este é um dilema clássico em otimização e aprendizado:
     
@@ -369,7 +369,7 @@ class ReinforcementLearningHH(HyperHeuristic):
     """
     Hiperheurística com Aprendizado por Reforço Simples.
     
-    💡 CONCEITO: Q-Learning Simplificado
+    CONCEITO: Q-Learning Simplificado
     ------------------------------------
     Cada heurística tem um "Q-value" que representa nossa
     estimativa de quão boa ela é. Atualizamos esse valor
@@ -380,7 +380,7 @@ class ReinforcementLearningHH(HyperHeuristic):
     
     Onde α é a taxa de aprendizado (learning rate).
     
-    📚 Para saber mais: "Multi-armed bandit problem"
+    Para saber mais: "Multi-armed bandit problem"
     https://en.wikipedia.org/wiki/Multi-armed_bandit
     """
     

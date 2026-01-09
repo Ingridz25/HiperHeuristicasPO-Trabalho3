@@ -7,7 +7,7 @@ Experimentação e Coleta de Resultados
 Este módulo automatiza a execução de experimentos, coletando
 métricas de desempenho para análise comparativa.
 
-📚 CONCEITO: Experimentação Científica
+CONCEITO: Experimentacao Cientifica
 --------------------------------------
 Em Pesquisa Operacional, não basta implementar - precisamos
 VALIDAR experimentalmente. Isso inclui:
@@ -133,7 +133,7 @@ class ExperimentRunner:
         """
         Executa múltiplas vezes um algoritmo na mesma instância.
         
-        💡 Por que múltiplas execuções?
+        Por que multiplas execucoes?
         Algoritmos com componente aleatório podem dar resultados
         diferentes a cada execução. Executando várias vezes,
         podemos calcular média, desvio padrão, etc.
@@ -462,7 +462,7 @@ def generate_correlated_instance(n, capacity_ratio=0.5, seed=None):
     """
     Gera instância com valores correlacionados aos pesos.
     
-    💡 Instâncias correlacionadas são mais difíceis!
+    Instancias correlacionadas sao mais dificeis!
     Quando valor ≈ peso, é difícil decidir o que levar.
     """
     if seed is not None:
