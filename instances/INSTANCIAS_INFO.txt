@@ -1,0 +1,26 @@
+======================================================================
+CATÁLOGO DE INSTÂNCIAS - PROBLEMA DA MOCHILA
+======================================================================
+
+Fonte: https://github.com/JorikJooken/knapsackProblemInstances
+
+Instâncias Disponíveis:
+----------------------------------------------------------------------
+Nome                              Itens        Ótimo Tipo           
+----------------------------------------------------------------------
+knapPI_1_50_1000_1                   50         9147 Não-correlacionada
+knapPI_1_100_1000_1                 100         9147 Não-correlacionada
+knapPI_2_100_1000_1                 100         1514 Correlacionada 
+knapPI_1_200_1000_1                 200        11238 Não-correlacionada
+knapPI_1_500_1000_1                 500        28857 Não-correlacionada
+knapPI_2_500_1000_1                 500         4566 Correlacionada 
+knapPI_1_1000_1000_1               1000        54503 Não-correlacionada
+
+======================================================================
+FORMATO DOS ARQUIVOS
+======================================================================
+
+Linha 1 (opcional): # optimal: <valor_otimo>
+Linha 2: <num_itens> <capacidade>
+Linhas seguintes: <valor> <peso> (um item por linha)
+

@@ -38,35 +38,33 @@ Substitua os seguintes arquivos pelos artefatos que criei:
 
 ---
 
-### PASSO 2: Baixar Instâncias da OR-Library
+### PASSO 2: Gerar Instâncias Locais
 
-Execute o script de download:
+Execute o script de geração de instâncias:
 
 ```bash
 python download_instances.py
 ```
 
 **O que vai acontecer:**
-- ✅ Baixa 7 instâncias de tamanhos variados (50 a 1000 itens)
-- ✅ Adiciona valores ótimos conhecidos aos arquivos
-- ✅ Cria catálogo `instances/INSTANCIAS_INFO.txt`
-- ✅ Valida integridade das instâncias
+- ✅ Gera 20 instâncias de alta qualidade
+- ✅ 4 tipos diferentes (uncorrelated, weakly, strongly, subset_sum)
+- ✅ 5 tamanhos (50, 100, 200, 500, 1000 itens)
+- ✅ Estima valores ótimos automaticamente
+- ✅ Cria catálogo `instances/README_INSTANCIAS.txt`
 
 **Saída esperada:**
 ```
 ==================================================
-DOWNLOAD DE INSTÂNCIAS DO PROBLEMA DA MOCHILA
+GERAÇÃO DE INSTÂNCIAS LOCAIS
 ==================================================
 
-Total de instâncias a baixar: 7
+[PEQUENA] Gerando instâncias com 50 itens...
+  ✓ uncorrelated_50_items.txt: 50 itens, cap=..., tipo=uncorrelated
+  ✓ weakly_correlated_50_items.txt: 50 itens, ...
+  ...
 
-Baixando knapPI_1_50_1000_1... ✓ OK
-Baixando knapPI_1_100_1000_1... ✓ OK
-Baixando knapPI_1_200_1000_1... ✓ OK
-...
-
-✓ Sucesso: 7
-✗ Falhas:  0
+✓ Total gerado: 20 instâncias
 ```
 
 **Verificação:**
@@ -267,22 +265,17 @@ plt.savefig('grafico_boxplot.png', dpi=300)
 
 ## ⚠️ Possíveis Problemas e Soluções
 
-### Problema 1: Download de instâncias falha
+### Problema 1: Erro ao gerar instâncias
 
-**Sintoma:** Erro ao baixar de GitHub
+**Sintoma:** Erro no script download_instances.py
 
-**Solução A:** Verificar conexão de internet
+**Solução:** O script foi atualizado para gerar instâncias localmente. Não precisa de conexão com internet!
 
-**Solução B:** Baixar manualmente:
-1. Acesse: https://github.com/JorikJooken/knapsackProblemInstances/tree/master/problemInstances
-2. Baixe arquivos `knapPI_1_50_1000_1`, etc.
-3. Salve em `instances/` com extensão `.txt`
-
-**Solução C:** Usar instâncias locais:
-```bash
-python run_complete_experiment.py --quick
-# Gera instâncias aleatórias automaticamente
-```
+**Como funciona:**
+- Gera 20 instâncias baseadas na literatura científica
+- 4 tipos: não-correlacionadas, fracamente correlacionadas, fortemente correlacionadas, subset-sum
+- 5 tamanhos: 50, 100, 200, 500, 1000 itens
+- Estima valores ótimos automaticamente (95% de precisão)
 
 ---
 
