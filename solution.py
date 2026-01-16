@@ -1,36 +1,14 @@
-"""
-Representação de soluções para o problema da mochila.
-"""
+
 
 from instance import KnapsackInstance
 import random
 
 
 class Solution:
-    """
-    Representa uma solução para o Problema da Mochila.
-    
-    Atributos:
-    ----------
-    instance : KnapsackInstance
-        A instância do problema que esta solução resolve.
-    items : list[int]
-        Vetor binário indicando quais itens estão na mochila.
-    value : int
-        Valor total dos itens selecionados.
-    weight : int
-        Peso total dos itens selecionados.
-    """
+
 
     def __init__(self, instance):
-        """
-        Cria uma solução vazia (nenhum item selecionado).
-        
-        Parâmetros:
-        -----------
-        instance : KnapsackInstance
-            Instância do problema.
-        """
+
         self.instance = instance
         # Inicialmente, nenhum item está na mochila
         self.items = [0] * instance.n

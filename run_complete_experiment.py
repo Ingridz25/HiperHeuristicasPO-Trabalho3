@@ -1,16 +1,4 @@
-"""
-Script para executar experimento completo automaticamente.
 
-Este script:
-1. Verifica se as instâncias estão disponíveis
-2. Baixa instâncias se necessário
-3. Executa experimento completo
-4. Gera resultados em CSV e JSON
-5. Cria resumo estatístico
-
-Uso:
-    python run_complete_experiment.py [--runs N] [--quick]
-"""
 
 import os
 import sys
@@ -28,19 +16,7 @@ except ImportError as e:
 
 
 def check_instances_available(min_instances=3):
-    """
-    Verifica se há instâncias suficientes disponíveis.
 
-    Parâmetros:
-    -----------
-    min_instances : int
-        Número mínimo de instâncias necessárias.
-
-    Retorna:
-    --------
-    bool
-        True se há instâncias suficientes.
-    """
     instances = load_all_instances_from_dir("instances")
 
     if len(instances) < min_instances:
@@ -52,14 +28,7 @@ def check_instances_available(min_instances=3):
 
 
 def download_instances_if_needed():
-    """
-    Baixa instâncias se não estiverem disponíveis.
 
-    Retorna:
-    --------
-    bool
-        True se instâncias estão disponíveis (baixadas ou já existentes).
-    """
     if check_instances_available():
         print("[OK] Instâncias já disponíveis.")
         return True
@@ -87,14 +56,7 @@ def download_instances_if_needed():
 
 
 def create_local_instances_fallback():
-    """
-    Cria instâncias locais como fallback se download falhar.
 
-    Retorna:
-    --------
-    list[KnapsackInstance]
-        Lista de instâncias geradas.
-    """
     print("\n[FALLBACK] Gerando instâncias locais aleatórias...")
 
     sizes = [20, 50, 100, 200, 500]
@@ -116,21 +78,7 @@ def create_local_instances_fallback():
 
 
 def run_experiment_with_validation(num_runs=10, quick_mode=False):
-    """
-    Executa experimento com validação de pré-requisitos.
 
-    Parâmetros:
-    -----------
-    num_runs : int
-        Número de execuções por algoritmo.
-    quick_mode : bool
-        Se True, usa apenas instâncias pequenas.
-
-    Retorna:
-    --------
-    bool
-        True se experimento foi concluído com sucesso.
-    """
     print("\n" + "=" * 70)
     print("EXPERIMENTO COMPLETO - HIPERHEURÍSTICA PARA PROBLEMA DA MOCHILA")
     print("=" * 70)
@@ -210,14 +158,7 @@ def run_experiment_with_validation(num_runs=10, quick_mode=False):
 
 
 def generate_quick_report(results_dir="results"):
-    """
-    Gera relatório resumido dos resultados.
 
-    Parâmetros:
-    -----------
-    results_dir : str
-        Diretório com os resultados.
-    """
     import csv
 
     files = [f for f in os.listdir(results_dir) if f.endswith('.csv')]

@@ -1,6 +1,3 @@
-"""
-Representação e leitura de instâncias do problema da mochila binária.
-"""
 
 import re
 
@@ -96,16 +93,7 @@ class KnapsackInstance:
         return self.values[item_index] / self.weights[item_index]
 
     def save_to_file(self, path, include_optimal=True):
-        """
-        Salva a instância em um arquivo.
 
-        Parâmetros:
-        -----------
-        path : str
-            Caminho do arquivo de saída.
-        include_optimal : bool
-            Se True, inclui valor ótimo como comentário.
-        """
         with open(path, 'w', encoding='utf-8') as f:
             # Comentário com valor ótimo (se conhecido)
             if include_optimal and self.optimal_value is not None:
@@ -189,24 +177,9 @@ class KnapsackInstance:
         return self.__str__()
 
 
-# =====================================================
-# FUNÇÕES AUXILIARES
-# =====================================================
 
 def load_all_instances_from_dir(directory="instances"):
-    """
-    Carrega todas as instâncias de um diretório.
 
-    Parâmetros:
-    -----------
-    directory : str
-        Caminho do diretório.
-
-    Retorna:
-    --------
-    list[KnapsackInstance]
-        Lista de instâncias carregadas.
-    """
     import os
 
     instances = []
@@ -236,9 +209,6 @@ def load_all_instances_from_dir(directory="instances"):
     return instances
 
 
-# =====================================================
-# CÓDIGO DE TESTE
-# =====================================================
 if __name__ == "__main__":
     print("=" * 60)
     print("TESTE DO MÓDULO instance.py")

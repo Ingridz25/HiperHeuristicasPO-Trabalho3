@@ -12,35 +12,8 @@ from heuristics import (
 )
 
 
-# =====================================================
-# HILL CLIMBING COM REINÍCIO ALEATÓRIO
-# =====================================================
-
 def hill_climbing(initial_solution, max_iterations=100, verbose=False):
-    """
-    Hill Climbing básico (subida de encosta).
-    
-    ESTRATEGIA: "Sempre va para cima, pare quando nao der mais"
-    
-    Aplica busca local repetidamente até não haver melhoria.
-    
-    LIMITACAO: Fica preso em OTIMOS LOCAIS - pontos que sao
-    melhores que todos os vizinhos, mas não são o melhor global.
-    
-    Parâmetros:
-    -----------
-    initial_solution : Solution
-        Solução inicial para começar a busca.
-    max_iterations : int
-        Número máximo de iterações (segurança).
-    verbose : bool
-        Se True, imprime progresso.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor solução encontrada.
-    """
+
     current = initial_solution.copy()
     
     for iteration in range(max_iterations):
@@ -59,35 +32,7 @@ def hill_climbing(initial_solution, max_iterations=100, verbose=False):
 
 
 def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbose=False):
-    """
-    Hill Climbing com Reinício Aleatório.
-    
-    Executa múltiplas vezes o Hill Climbing, cada vez começando
-    de uma solução aleatória diferente. Guarda a melhor de todas.
-    -------------------------------
-    Como o HC básico fica preso em ótimos locais, a ideia é:
-    1. Rodar HC partindo de um ponto aleatório
-    2. Guardar o resultado
-    3. Rodar de novo de outro ponto aleatório
-    4. Repetir várias vezes
-    5. Retornar o melhor resultado encontrado
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    num_restarts : int
-        Quantas vezes reiniciar.
-    max_iter_per_run : int
-        Iterações máximas por execução do HC.
-    verbose : bool
-        Se True, imprime progresso.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor solução encontrada em todas as execuções.
-    """
+
     best_overall = None
     
     for restart in range(num_restarts):
@@ -110,61 +55,13 @@ def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbo
     return best_overall
 
 
-# =====================================================
-# SIMULATED ANNEALING
-# =====================================================
-
 def simulated_annealing(instance, 
                         initial_temp=1000, 
                         cooling_rate=0.95,
                         min_temp=1,
                         iterations_per_temp=50,
                         verbose=False):
-    """
-    Simulated Annealing (Recozimento Simulado).
-    
-    ESTRATEGIA: "No inicio aceito pioras, depois fico mais exigente"
-    
-    CONCEITO: A Analogia do Recozimento
-    --------------------------------------
-    O nome vem da metalurgia! Quando você aquece um metal e deixa
-    esfriar LENTAMENTE, os átomos se arranjam de forma ordenada,
-    resultando em um material mais forte.
-    
-    Na otimização:
-    - TEMPERATURA ALTA: Aceita movimentos ruins (explora muito)
-    - TEMPERATURA BAIXA: Só aceita melhorias (explora pouco)
-    - RESFRIAMENTO: A temperatura diminui gradualmente
-    
-    Isso permite ESCAPAR de ótimos locais no início, e depois
-    CONVERGIR para uma boa solução no final.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    initial_temp : float
-        Temperatura inicial (quanto maior, mais aceita pioras).
-    cooling_rate : float
-        Taxa de resfriamento (0.9 a 0.99). Define quão rápido esfria.
-        Valor mais alto = resfriamento mais lento = mais exploração.
-    min_temp : float
-        Temperatura mínima (critério de parada).
-    iterations_per_temp : int
-        Quantas iterações em cada nível de temperatura.
-    verbose : bool
-        Se True, imprime progresso.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor solução encontrada.
-    
-    Dica de parametros:
-    - Problema pequeno (<100 itens): initial_temp=100, cooling_rate=0.9
-    - Problema médio: initial_temp=1000, cooling_rate=0.95
-    - Problema grande: initial_temp=5000, cooling_rate=0.99
-    """
+
     # Solução inicial: usa heurística gulosa para ter bom ponto de partida
     current = greedy_ratio(instance)
     
@@ -232,15 +129,7 @@ def simulated_annealing(instance,
 
 
 def generate_neighbor(solution):
-    """
-    Gera um vizinho da solução atual.
-    
-    Escolhe aleatoriamente entre diferentes tipos de movimento:
-    1. Flip de um item aleatório
-    2. Swap entre um item dentro e um fora
-    
-    Esta aleatoriedade é importante para explorar o espaço de busca!
-    """
+
     neighbor = solution.copy()
     
     # Escolhe tipo de movimento
@@ -270,39 +159,9 @@ def generate_neighbor(solution):
     return neighbor
 
 
-# =====================================================
-# GRASP (Greedy Randomized Adaptive Search Procedure)
-# =====================================================
 
 def grasp(instance, max_iterations=100, alpha=0.3, verbose=False):
-    """
-    GRASP - Greedy Randomized Adaptive Search Procedure.
-    
-    ESTRATEGIA: "Construa varias solucoes semi-aleatorias e melhore cada uma"
-    
-    CONCEITO: GRASP em duas fases
-    --------------------------------
-    Fase 1 (Construção): Cria solução com heurística gulosa aleatorizada
-    Fase 2 (Melhoria): Aplica busca local na solução construída
-    
-    Repete muitas vezes e guarda a melhor.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    max_iterations : int
-        Número de iterações (construção + melhoria).
-    alpha : float
-        Parâmetro de aleatoriedade na construção (0 a 1).
-    verbose : bool
-        Se True, imprime progresso.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor solução encontrada.
-    """
+
     best = None
     
     for iteration in range(max_iterations):
@@ -323,30 +182,8 @@ def grasp(instance, max_iterations=100, alpha=0.3, verbose=False):
     return best
 
 
-# =====================================================
-# FUNÇÃO AUXILIAR: Wrapper para Experimentação
-# =====================================================
-
 def run_metaheuristic(name, instance, **kwargs):
-    """
-    Executa uma metaheurística pelo nome.
-    
-    Facilita a experimentação automática.
-    
-    Parâmetros:
-    -----------
-    name : str
-        Nome da metaheurística: 'sa', 'hc_restart', 'grasp'
-    instance : KnapsackInstance
-        Instância do problema.
-    **kwargs : dict
-        Parâmetros adicionais para a metaheurística.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor solução encontrada.
-    """
+
     if name == 'sa' or name == 'simulated_annealing':
         return simulated_annealing(instance, **kwargs)
     
@@ -360,9 +197,6 @@ def run_metaheuristic(name, instance, **kwargs):
         raise ValueError(f"Metaheurística desconhecida: {name}")
 
 
-# =====================================================
-# CÓDIGO DE TESTE
-# =====================================================
 if __name__ == "__main__":
     from instance import KnapsackInstance
     

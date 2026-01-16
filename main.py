@@ -1,40 +1,3 @@
-"""
-===========================================================
-PROGRAMA PRINCIPAL
-Hiperheurística para o Problema da Mochila Binária
-===========================================================
-
-Trabalho de Pesquisa Operacional
-Ciência da Computação
-
-Este é o ponto de entrada do programa. Ele demonstra:
-1. Execução de heurísticas básicas
-2. Execução de metaheurísticas (Simulated Annealing, GRASP, etc.)
-3. Execução de hiperheurísticas (Roleta, Epsilon-Greedy, RL)
-4. Comparação e análise de resultados
-
-Como usar:
-----------
-1. Execução rápida (demo):
-   python main.py
-
-2. Com instância específica:
-   python main.py --instance caminho/para/instancia.txt
-
-3. Experimento completo:
-   python main.py --experiment --runs 10
-
-Estrutura do projeto:
----------------------
-main.py              <- Voce esta aqui!
-instance.py          <- Representacao de instancias
-solution.py          <- Representacao de solucoes
-heuristics.py        <- Heuristicas de baixo nivel
-metaheuristic.py     <- Metaheuristicas (SA, GRASP, HC)
-hyperheuristic.py    <- Hiperheuristicas
-experiments.py       <- Experimentacao automatizada
-instances/           <- Arquivos de instancias
-"""
 
 import argparse
 import os
@@ -58,10 +21,6 @@ from experiments import (
     ExperimentRunner, generate_random_instance, run_full_experiment
 )
 
-
-# =====================================================
-# DEMONSTRACAO COMPLETA
-# =====================================================
 
 def run_demo():
     """
@@ -300,10 +259,6 @@ def run_experiment(num_runs=10, sizes=None):
     
     return runner
 
-
-# =====================================================
-# PONTO DE ENTRADA
-# =====================================================
 
 def main():
     """Funcao principal."""
