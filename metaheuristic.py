@@ -1,26 +1,5 @@
 """
-===========================================================
-MÓDULO: metaheuristic.py
-Metaheurísticas para o Problema da Mochila
-===========================================================
-
-Este módulo implementa metaheurísticas que utilizam as heurísticas
-de baixo nível como "operadores" internos.
-
-CONCEITO: O que e uma Metaheuristica?
------------------------------------------
-Uma metaheurística é um "algoritmo de alto nível" que CONTROLA
-outros algoritmos (heurísticas) para explorar o espaço de busca.
-
-Diferença chave:
-- Heurística: Regra fixa ("sempre pegue o melhor item")
-- Metaheurística: Estratégia de controle ("use heurísticas X e Y
-  de forma inteligente, permitindo retrocessos temporários")
-
-Metaheurísticas implementadas:
-- Hill Climbing com Reinício Aleatório
-- Simulated Annealing (RECOMENDADO para o trabalho)
-- GRASP (Greedy Randomized Adaptive Search Procedure)
+Metaheurísticas para o problema da mochila.
 """
 
 import random
@@ -83,12 +62,8 @@ def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbo
     """
     Hill Climbing com Reinício Aleatório.
     
-    ESTRATEGIA: "Ficou preso? Comeca de novo em outro lugar!"
-    
     Executa múltiplas vezes o Hill Climbing, cada vez começando
     de uma solução aleatória diferente. Guarda a melhor de todas.
-    
-    CONCEITO: Reinicio (Restart)
     -------------------------------
     Como o HC básico fica preso em ótimos locais, a ideia é:
     1. Rodar HC partindo de um ponto aleatório

@@ -1,29 +1,5 @@
 """
-===========================================================
-MÓDULO: hyperheuristic.py
-Hiperheurística de Seleção para o Problema da Mochila
-===========================================================
-
-CONCEITO: O que e uma Hiperheuristica?
------------------------------------------
-Uma hiperheurística é um "algoritmo de nível mais alto" que
-CONTROLA A SELEÇÃO de outras heurísticas.
-
-Enquanto uma metaheurística usa heurísticas de forma fixa,
-a hiperheurística APRENDE quais heurísticas funcionam melhor
-e ADAPTA sua escolha ao longo do tempo!
-
-É como um "gerente" que observa quais funcionários (heurísticas)
-estão tendo bom desempenho e dá mais tarefas para os melhores.
-
-Mecanismos de Seleção implementados:
-1. Roleta Ponderada (Roulette Wheel)
-2. Epsilon-Greedy (Exploração vs Exploitação)
-3. Aprendizado por Reforço Simples (Reinforcement Learning)
-
-Leitura recomendada:
-- Burke et al. "Hyper-heuristics: A survey of the state of the art"
-  https://doi.org/10.1016/j.ejor.2012.10.039
+Hiperheurística de seleção automática de heurísticas para o problema da mochila.
 """
 
 import random
@@ -35,72 +11,34 @@ from heuristics import (
 )
 
 
-# =====================================================
-# HIPERHEURÍSTICA BASE
-# =====================================================
-
 class HyperHeuristic:
-    """
-    Classe base para hiperheurísticas de seleção.
-    
-    Esta classe implementa a estrutura comum e pode ser
-    estendida com diferentes mecanismos de seleção.
-    
-    Atributos:
-    ----------
-    heuristics : list
-        Lista de funções heurísticas disponíveis.
-    scores : dict
-        Pontuação de cada heurística (para seleção).
-    history : list
-        Histórico de uso (qual heurística, quando, resultado).
-    """
-    
+
     def __init__(self, heuristics):
-        """
-        Inicializa a hiperheurística.
-        
-        Parâmetros:
-        -----------
-        heuristics : list
-            Lista de funções heurísticas.
-            Cada função deve receber instance ou Solution e retornar Solution.
-        """
+
         self.heuristics = heuristics
-        
+
         # Inicializa scores: todas começam iguais
         self.scores = {h.__name__: 1.0 for h in heuristics}
-        
+
         # Histórico para análise posterior
         self.history = []
-        
+
         # Contadores de uso
         self.usage_count = {h.__name__: 0 for h in heuristics}
-    
+
     def select_heuristic(self):
         """
         Seleciona uma heurística. Deve ser sobrescrito nas subclasses.
         """
         raise NotImplementedError("Subclasses devem implementar select_heuristic()")
-    
+
     def update_scores(self, heuristic, old_value, new_value):
-        """
-        Atualiza a pontuação de uma heurística baseado no resultado.
-        
-        Parâmetros:
-        -----------
-        heuristic : function
-            Heurística que foi usada.
-        old_value : int
-            Valor da solução antes de aplicar a heurística.
-        new_value : int
-            Valor da solução depois de aplicar a heurística.
-        """
+
         name = heuristic.__name__
-        
+
         # Calcula recompensa baseada na melhoria
         improvement = new_value - old_value
-        
+
         if improvement > 0:
             # Melhorou! Aumenta o score proporcional à melhoria
             reward = 1 + (improvement / max(old_value, 1)) * 10
@@ -110,10 +48,10 @@ class HyperHeuristic:
         else:
             # Piorou - penalidade maior
             reward = 0.1
-        
+
         # Aplica a recompensa
         self.scores[name] = max(0.1, self.scores[name] * reward)
-        
+
         # Registra no histórico
         self.history.append({
             'heuristic': name,
@@ -123,22 +61,18 @@ class HyperHeuristic:
             'reward': reward,
             'new_score': self.scores[name]
         })
-        
+
         # Incrementa contador de uso
         self.usage_count[name] += 1
-    
+
     def get_statistics(self):
-        """
-        Retorna estatísticas sobre o uso das heurísticas.
-        
-        Útil para análise e relatório!
-        """
+
         stats = {}
         for h in self.heuristics:
             name = h.__name__
             # Filtra histórico desta heurística
             h_history = [e for e in self.history if e['heuristic'] == name]
-            
+
             if h_history:
                 improvements = [e['improvement'] for e in h_history]
                 stats[name] = {
@@ -156,54 +90,34 @@ class HyperHeuristic:
                     'best_improvement': 0,
                     'current_score': self.scores[name]
                 }
-        
+
         return stats
-    
+
     def print_statistics(self):
         """Imprime estatísticas formatadas."""
         stats = self.get_statistics()
-        
+
         print("\n[ESTATISTICAS] ESTATISTICAS DA HIPERHEURISTICA")
         print("=" * 60)
         print(f"{'Heuristica':<25} {'Usos':>6} {'Melhoria Media':>15} {'Score':>10}")
         print("-" * 60)
-        
+
         for name, data in sorted(stats.items(), key=lambda x: -x[1]['uses']):
             print(f"{name:<25} {data['uses']:>6} {data['avg_improvement']:>15.2f} {data['current_score']:>10.2f}")
 
 
-# =====================================================
-# ROLETA PONDERADA (Roulette Wheel Selection)
-# =====================================================
-
 class RouletteWheelHH(HyperHeuristic):
-    """
-    Hiperheurística com seleção por Roleta Ponderada.
-    
-    CONCEITO: Roleta Ponderada
-    -----------------------------
-    Imagine uma roleta de cassino, mas onde cada fatia tem
-    tamanho proporcional ao score da heurística.
-    
-    Heurísticas com score alto têm fatia maior → mais chances
-    de serem selecionadas.
-    
-    Exemplo:
-    - Heurística A: score = 3.0 → 30% da roleta
-    - Heurística B: score = 5.0 → 50% da roleta
-    - Heurística C: score = 2.0 → 20% da roleta
-    """
-    
+
     def select_heuristic(self):
         """
         Seleciona uma heurística usando roleta ponderada.
         """
         # Calcula total dos scores
         total = sum(self.scores.values())
-        
+
         # "Gira" a roleta: número aleatório entre 0 e total
         r = random.uniform(0, total)
-        
+
         # Percorre as heurísticas somando scores
         # Para quando a soma ultrapassa r
         accumulated = 0
@@ -211,106 +125,53 @@ class RouletteWheelHH(HyperHeuristic):
             accumulated += self.scores[h.__name__]
             if accumulated >= r:
                 return h
-        
+
         # Fallback (não deveria chegar aqui)
         return self.heuristics[-1]
-    
+
     def solve(self, instance, iterations=100, verbose=False):
-        """
-        Resolve o problema usando a hiperheurística.
-        
-        Parâmetros:
-        -----------
-        instance : KnapsackInstance
-            Instância do problema.
-        iterations : int
-            Número de iterações.
-        verbose : bool
-            Se True, imprime progresso.
-        
-        Retorna:
-        --------
-        Solution
-            Melhor solução encontrada.
-        """
+
         # Começa com solução gulosa
         current = greedy_ratio(instance)
         best = current.copy()
-        
+
         if verbose:
             print(f"HH Roleta - Início: valor={best.value}")
-        
+
         for i in range(iterations):
             # Seleciona heurística
             h = self.select_heuristic()
             old_value = current.value
-            
+
             # Aplica a heurística
             # Verifica se é construtiva (recebe instance) ou de melhoria (recebe solution)
             try:
                 new_solution = h(current)  # Tenta como melhoria
             except TypeError:
                 new_solution = h(instance)  # É construtiva
-            
+
             # Aceita se for viável
             if new_solution.is_feasible():
                 self.update_scores(h, old_value, new_solution.value)
                 current = new_solution
-                
+
                 if current.value > best.value:
                     best = current.copy()
                     if verbose:
                         print(f"  Iter {i}: {h.__name__} → novo melhor = {best.value}")
-        
+
         return best
 
 
-# =====================================================
-# EPSILON-GREEDY
-# =====================================================
-
 class EpsilonGreedyHH(HyperHeuristic):
-    """
-    Hiperheurística com seleção Epsilon-Greedy.
-    
-    CONCEITO: Exploracao vs Exploitacao (Explore vs Exploit)
-    -----------------------------------------------------------
-    Este é um dilema clássico em otimização e aprendizado:
-    
-    - EXPLOITAÇÃO: Usar o que já sabemos que funciona bem
-      (escolher a heurística com maior score)
-    
-    - EXPLORAÇÃO: Tentar coisas novas para descobrir alternativas
-      (escolher aleatoriamente)
-    
-    O epsilon-greedy resolve isso assim:
-    - Com probabilidade (1-ε): escolhe a MELHOR (exploitação)
-    - Com probabilidade ε: escolhe ALEATÓRIA (exploração)
-    
-    Geralmente ε começa alto (0.3-0.5) e diminui com o tempo,
-    assim exploramos no início e focamos no final.
-    """
-    
+
     def __init__(self, heuristics, epsilon=0.3, epsilon_decay=0.99, min_epsilon=0.05):
-        """
-        Inicializa a hiperheurística epsilon-greedy.
-        
-        Parâmetros:
-        -----------
-        heuristics : list
-            Lista de heurísticas.
-        epsilon : float
-            Probabilidade inicial de exploração (0 a 1).
-        epsilon_decay : float
-            Fator de decaimento do epsilon (aplicado a cada iteração).
-        min_epsilon : float
-            Valor mínimo do epsilon.
-        """
+
         super().__init__(heuristics)
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.min_epsilon = min_epsilon
-    
+
     def select_heuristic(self):
         """
         Seleciona heurística usando estratégia epsilon-greedy.
@@ -322,111 +183,71 @@ class EpsilonGreedyHH(HyperHeuristic):
             # EXPLOITAÇÃO: escolhe a melhor
             best_name = max(self.scores.keys(), key=lambda k: self.scores[k])
             return next(h for h in self.heuristics if h.__name__ == best_name)
-    
+
     def decay_epsilon(self):
         """Diminui o epsilon (menos exploração ao longo do tempo)."""
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
-    
+
     def solve(self, instance, iterations=100, verbose=False):
         """
         Resolve o problema usando epsilon-greedy.
         """
         current = greedy_ratio(instance)
         best = current.copy()
-        
+
         if verbose:
             print(f"HH Epsilon-Greedy - Início: valor={best.value}, ε={self.epsilon:.3f}")
-        
+
         for i in range(iterations):
             h = self.select_heuristic()
             old_value = current.value
-            
+
             try:
                 new_solution = h(current)
             except TypeError:
                 new_solution = h(instance)
-            
+
             if new_solution.is_feasible():
                 self.update_scores(h, old_value, new_solution.value)
                 current = new_solution
-                
+
                 if current.value > best.value:
                     best = current.copy()
                     if verbose:
                         print(f"  Iter {i}: {h.__name__} → melhor = {best.value} (ε={self.epsilon:.3f})")
-            
+
             # Diminui epsilon
             self.decay_epsilon()
-        
+
         return best
 
 
-# =====================================================
-# APRENDIZADO POR REFORÇO SIMPLES (Simple RL)
-# =====================================================
-
 class ReinforcementLearningHH(HyperHeuristic):
-    """
-    Hiperheurística com Aprendizado por Reforço Simples.
-    
-    CONCEITO: Q-Learning Simplificado
-    ------------------------------------
-    Cada heurística tem um "Q-value" que representa nossa
-    estimativa de quão boa ela é. Atualizamos esse valor
-    baseado nas recompensas que recebemos ao usá-la.
-    
-    Fórmula de atualização:
-    Q(h) = Q(h) + α * (recompensa - Q(h))
-    
-    Onde α é a taxa de aprendizado (learning rate).
-    
-    Para saber mais: "Multi-armed bandit problem"
-    https://en.wikipedia.org/wiki/Multi-armed_bandit
-    """
-    
+
+
     def __init__(self, heuristics, learning_rate=0.1, discount_factor=0.9):
-        """
-        Inicializa a hiperheurística com RL.
-        
-        Parâmetros:
-        -----------
-        heuristics : list
-            Lista de heurísticas.
-        learning_rate : float
-            Taxa de aprendizado (α). Quanto maior, mais rápido aprende
-            mas pode ser instável. Valor típico: 0.1 a 0.3.
-        discount_factor : float
-            Fator de desconto (γ). Quanta importância dar para
-            recompensas futuras vs imediatas. Valor típico: 0.9.
-        """
+
         super().__init__(heuristics)
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
-        
+
         # Q-values (estimativas de qualidade)
         self.q_values = {h.__name__: 0.0 for h in heuristics}
-        
+
         # Temperaturas para seleção softmax
         self.temperature = 1.0
-    
+
     def select_heuristic(self):
-        """
-        Seleciona heurística usando Softmax sobre Q-values.
-        
-        Softmax converte Q-values em probabilidades:
-        P(h) = exp(Q(h)/T) / Σ exp(Q(h')/T)
-        
-        T é a temperatura: alta = mais uniforme, baixa = mais greedy
-        """
+
         # Calcula exponenciais
         exp_values = {}
         for h in self.heuristics:
             name = h.__name__
             # Limita para evitar overflow
             exp_values[name] = math.exp(min(self.q_values[name] / self.temperature, 50))
-        
+
         total = sum(exp_values.values())
-        
+
         # Seleciona com probabilidade proporcional
         r = random.uniform(0, total)
         accumulated = 0
@@ -434,9 +255,9 @@ class ReinforcementLearningHH(HyperHeuristic):
             accumulated += exp_values[h.__name__]
             if accumulated >= r:
                 return h
-        
+
         return self.heuristics[-1]
-    
+
     def update_q_value(self, heuristic, reward):
         """
         Atualiza o Q-value de uma heurística.
@@ -445,33 +266,33 @@ class ReinforcementLearningHH(HyperHeuristic):
         """
         name = heuristic.__name__
         old_q = self.q_values[name]
-        
+
         # Atualização Q-learning simplificada
         self.q_values[name] = old_q + self.learning_rate * (reward - old_q)
-    
+
     def solve(self, instance, iterations=100, verbose=False):
         """
         Resolve o problema usando aprendizado por reforço.
         """
         current = greedy_ratio(instance)
         best = current.copy()
-        
+
         if verbose:
             print(f"HH Reinforcement Learning - Início: valor={best.value}")
-        
+
         for i in range(iterations):
             h = self.select_heuristic()
             old_value = current.value
-            
+
             try:
                 new_solution = h(current)
             except TypeError:
                 new_solution = h(instance)
-            
+
             if new_solution.is_feasible():
                 # Calcula recompensa
                 improvement = new_solution.value - old_value
-                
+
                 # Normaliza a recompensa para escala razoável
                 if improvement > 0:
                     reward = 1.0 + improvement / max(old_value, 1)
@@ -479,25 +300,25 @@ class ReinforcementLearningHH(HyperHeuristic):
                     reward = 0.0
                 else:
                     reward = -0.5
-                
+
                 # Atualiza Q-value
                 self.update_q_value(h, reward)
-                
+
                 # Atualiza scores para manter compatibilidade
                 self.update_scores(h, old_value, new_solution.value)
-                
+
                 current = new_solution
-                
+
                 if current.value > best.value:
                     best = current.copy()
                     if verbose:
                         print(f"  Iter {i}: {h.__name__} → melhor = {best.value}")
-            
+
             # Diminui temperatura (fica mais greedy)
             self.temperature = max(0.1, self.temperature * 0.99)
-        
+
         return best
-    
+
     def print_q_values(self):
         """Imprime os Q-values aprendidos."""
         print("\n[Q-VALUES] Q-VALUES APRENDIDOS")
@@ -506,53 +327,25 @@ class ReinforcementLearningHH(HyperHeuristic):
             print(f"  {name:<25}: {q:.4f}")
 
 
-# =====================================================
-# HIPERHEURÍSTICA COMPLETA (combina tudo)
-# =====================================================
 
 class AdaptiveHyperHeuristic(HyperHeuristic):
-    """
-    Hiperheurística Adaptativa Completa.
-    
-    Combina:
-    - Seleção inteligente (epsilon-greedy com decaimento)
-    - Aprendizado por reforço
-    - Aceitação com critério de melhoria
-    - Reinício quando estagna
-    
-    Esta é a versão mais completa para o trabalho!
-    """
-    
-    def __init__(self, heuristics, 
-                 epsilon=0.4, 
+
+
+    def __init__(self, heuristics,
+                 epsilon=0.4,
                  epsilon_decay=0.995,
                  learning_rate=0.15,
                  stagnation_limit=20):
-        """
-        Inicializa a hiperheurística adaptativa.
-        
-        Parâmetros:
-        -----------
-        heuristics : list
-            Lista de heurísticas disponíveis.
-        epsilon : float
-            Probabilidade inicial de exploração.
-        epsilon_decay : float
-            Taxa de decaimento do epsilon.
-        learning_rate : float
-            Taxa de aprendizado.
-        stagnation_limit : int
-            Quantas iterações sem melhoria para reiniciar.
-        """
+
         super().__init__(heuristics)
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.learning_rate = learning_rate
         self.stagnation_limit = stagnation_limit
-        
+
         # Q-values para cada heurística
         self.q_values = {h.__name__: 1.0 for h in heuristics}
-    
+
     def select_heuristic(self):
         """Seleção epsilon-greedy baseada em Q-values."""
         if random.random() < self.epsilon:
@@ -560,11 +353,11 @@ class AdaptiveHyperHeuristic(HyperHeuristic):
         else:
             best_name = max(self.q_values.keys(), key=lambda k: self.q_values[k])
             return next(h for h in self.heuristics if h.__name__ == best_name)
-    
+
     def update_learning(self, heuristic, improvement, solution_value):
         """Atualiza Q-values com recompensa."""
         name = heuristic.__name__
-        
+
         # Recompensa normalizada
         if improvement > 0:
             reward = 1.0 + (improvement / max(solution_value, 1)) * 5
@@ -572,11 +365,11 @@ class AdaptiveHyperHeuristic(HyperHeuristic):
             reward = 0.1
         else:
             reward = -0.3
-        
+
         # Atualização do Q-value
         old_q = self.q_values[name]
         self.q_values[name] = old_q + self.learning_rate * (reward - old_q)
-    
+
     def solve(self, instance, iterations=200, verbose=False):
         """
         Resolve o problema com a hiperheurística adaptativa.
@@ -588,43 +381,43 @@ class AdaptiveHyperHeuristic(HyperHeuristic):
             sol = h(instance)
             if best is None or sol.value > best.value:
                 best = sol.copy()
-        
+
         current = best.copy()
         stagnation = 0
-        
+
         if verbose:
             print(f"HH Adaptativa - Início: valor={best.value}")
             print(f"  Parâmetros: ε={self.epsilon:.2f}, lr={self.learning_rate}")
-        
+
         for i in range(iterations):
             h = self.select_heuristic()
             old_value = current.value
-            
+
             # Aplica heurística
             try:
                 new_solution = h(current)
             except TypeError:
                 new_solution = h(instance)
-            
+
             if new_solution.is_feasible():
                 improvement = new_solution.value - old_value
-                
+
                 # Atualiza aprendizado
                 self.update_learning(h, improvement, old_value)
                 self.update_scores(h, old_value, new_solution.value)
-                
+
                 # Aceita se melhorou
                 if improvement >= 0:
                     current = new_solution
                     stagnation = 0 if improvement > 0 else stagnation + 1
-                    
+
                     if current.value > best.value:
                         best = current.copy()
                         if verbose:
                             print(f"  Iter {i}: {h.__name__} → NOVO MELHOR = {best.value}")
                 else:
                     stagnation += 1
-                
+
                 # Reinício se estagnou
                 if stagnation >= self.stagnation_limit:
                     current = create_random_solution(instance)
@@ -632,16 +425,13 @@ class AdaptiveHyperHeuristic(HyperHeuristic):
                     stagnation = 0
                     if verbose:
                         print(f"  Iter {i}: REINÍCIO (estagnação)")
-            
+
             # Decai epsilon
             self.epsilon = max(0.05, self.epsilon * self.epsilon_decay)
-        
+
         return best
 
 
-# =====================================================
-# FUNÇÕES DE CONVENIÊNCIA
-# =====================================================
 
 def get_default_heuristics():
     """Retorna conjunto padrão de heurísticas para a hiperheurística."""
@@ -653,24 +443,10 @@ def get_default_heuristics():
 
 
 def create_hyperheuristic(method='adaptive', heuristics=None):
-    """
-    Cria uma hiperheurística pelo nome do método.
-    
-    Parâmetros:
-    -----------
-    method : str
-        'roulette', 'epsilon_greedy', 'rl', ou 'adaptive'
-    heuristics : list
-        Lista de heurísticas (usa padrão se None).
-    
-    Retorna:
-    --------
-    HyperHeuristic
-        Instância da hiperheurística.
-    """
+
     if heuristics is None:
         heuristics = get_default_heuristics()
-    
+
     if method == 'roulette':
         return RouletteWheelHH(heuristics)
     elif method == 'epsilon_greedy':
@@ -683,55 +459,52 @@ def create_hyperheuristic(method='adaptive', heuristics=None):
         raise ValueError(f"Método desconhecido: {method}")
 
 
-# =====================================================
-# CÓDIGO DE TESTE
-# =====================================================
 if __name__ == "__main__":
     from instance import KnapsackInstance
-    
+
     # Cria instância de teste
     inst = KnapsackInstance(
         capacity=50,
         weights=[10, 20, 30, 40, 25, 15, 35, 45, 5, 12],
         values=[60, 100, 120, 150, 90, 50, 130, 180, 30, 70]
     )
-    
+
     print("=" * 70)
     print("TESTE DAS HIPERHEURÍSTICAS")
     print("=" * 70)
     print(f"\nInstância: {inst.n} itens, capacidade={inst.capacity}")
-    
+
     # Baseline
     baseline = greedy_ratio(inst)
     print(f"\n[BASELINE] Baseline (Greedy Ratio): valor={baseline.value}")
-    
+
     # Testa cada tipo de hiperheurística
     heuristics = get_default_heuristics()
-    
+
     print("\n--- Roleta Ponderada ---")
     hh1 = RouletteWheelHH(heuristics)
     result1 = hh1.solve(inst, iterations=100, verbose=False)
     print(f"Resultado: valor={result1.value}")
     hh1.print_statistics()
-    
+
     print("\n--- Epsilon-Greedy ---")
     hh2 = EpsilonGreedyHH(heuristics, epsilon=0.4)
     result2 = hh2.solve(inst, iterations=100, verbose=False)
     print(f"Resultado: valor={result2.value}")
     hh2.print_statistics()
-    
+
     print("\n--- Aprendizado por Reforço ---")
     hh3 = ReinforcementLearningHH(heuristics)
     result3 = hh3.solve(inst, iterations=100, verbose=False)
     print(f"Resultado: valor={result3.value}")
     hh3.print_q_values()
-    
+
     print("\n--- Hiperheurística Adaptativa ---")
     hh4 = AdaptiveHyperHeuristic(heuristics)
     result4 = hh4.solve(inst, iterations=150, verbose=True)
     print(f"Resultado: valor={result4.value}")
     hh4.print_statistics()
-    
+
     # Resumo final
     print("\n" + "=" * 70)
     print("RESUMO COMPARATIVO")
@@ -741,4 +514,3 @@ if __name__ == "__main__":
     print(f"Epsilon-Greedy:   {result2.value}")
     print(f"RL:               {result3.value}")
     print(f"Adaptativa:       {result4.value}")
-

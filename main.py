@@ -187,9 +187,6 @@ def run_demo():
     print("ETAPA 5: HIPERHEURISTICAS")
     print("=" * 70)
     
-    print("\n[CONCEITO] Hiperheuristicas sao 'algoritmos de selecao de algoritmos'.")
-    print("           Elas aprendem quais heuristicas funcionam melhor e adaptam suas escolhas!")
-    
     heuristics_list = get_default_heuristics()
     
     print("\n   [ROLETA] Roleta Ponderada:")

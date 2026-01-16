@@ -1,64 +1,13 @@
 """
-===========================================================
-MÓDULO: heuristics.py
-Heurísticas de Baixo Nível para o Problema da Mochila
-===========================================================
-
-Este módulo contém TODAS as heurísticas exigidas para o trabalho:
-
-HEURISTICAS CONSTRUTIVAS (criam solucoes do zero):
-  - greedy_value()     -> Prioriza itens com MAIOR VALOR
-  - greedy_weight()    -> Prioriza itens com MENOR PESO
-  - greedy_ratio()     -> Prioriza itens com MELHOR razao valor/peso
-  - greedy_random()    -> Construcao semi-aleatoria (para GRASP)
-
-HEURISTICAS DE MELHORIA (melhoram solucoes existentes):
-  - local_search_1flip()  -> Testa inverter cada item
-  - local_search_2swap()  -> Troca um item dentro por um fora
-  - remove_worst()        -> Remove item com pior custo-beneficio
-
-CONCEITO: Heuristicas Construtivas vs. de Melhoria
------------------------------------------------------
-Construtivas: Constroem uma solução "do zero", item por item.
-De Melhoria: Recebem uma solução e tentam melhorá-la.
-
-A ideia é usar construtivas para gerar uma solução inicial,
-depois aplicar as de melhoria para refinar.
+Heurísticas construtivas e de melhoria para o problema da mochila.
 """
 
 import random
 from solution import Solution
 
 
-# =====================================================
-# HEURÍSTICAS CONSTRUTIVAS
-# =====================================================
-
 def greedy_value(instance):
-    """
-    Heurística Gulosa por VALOR.
-    
-    ESTRATEGIA: "Quero os itens mais valiosos!"
-    
-    Ordena os itens do mais valioso ao menos valioso.
-    Para cada item (em ordem), adiciona se couber na mochila.
-    
-    LIMITACAO: Pode pegar um item muito valioso mas pesado,
-    deixando espaço insuficiente para vários itens menores que
-    juntos teriam valor maior.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    
-    Retorna:
-    --------
-    Solution
-        Solução construída pela heurística.
-    
-    Complexidade: O(n log n) - dominado pela ordenação
-    """
+
     sol = Solution(instance)
     
     # Ordena índices dos itens por valor DECRESCENTE
@@ -85,32 +34,7 @@ def greedy_value(instance):
 
 
 def greedy_weight(instance):
-    """
-    Heurística Gulosa por PESO (menor peso primeiro).
-    
-    ESTRATEGIA: "Quero caber o maximo de itens possivel!"
-    
-    Ordena os itens do mais leve ao mais pesado.
-    Adiciona itens enquanto couberem.
-    
-    Esta estrategia tende a colocar MUITOS itens na mochila,
-    o que pode ser bom se os valores são similares.
-    
-    LIMITACAO: Pode pegar muitos itens leves de baixo valor,
-    ignorando um item pesado mas muito valioso.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    
-    Retorna:
-    --------
-    Solution
-        Solução construída pela heurística.
-    
-    Complexidade: O(n log n)
-    """
+
     sol = Solution(instance)
     
     # Ordena por peso CRESCENTE (mais leves primeiro)
@@ -132,30 +56,7 @@ def greedy_weight(instance):
 
 
 def greedy_ratio(instance):
-    """
-    Heurística Gulosa por RAZÃO VALOR/PESO.
-    
-    ESTRATEGIA: "Quero o melhor custo-beneficio!"
-    
-    Esta é geralmente a MELHOR heurística gulosa para a mochila.
-    Prioriza itens que dão mais "valor por quilo".
-    
-    CONCEITO: A razao valor/peso representa a "eficiencia"
-    de cada item. Um item com razão 2.0 dá 2 unidades de valor
-    para cada unidade de peso que ocupa.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    
-    Retorna:
-    --------
-    Solution
-        Solução construída pela heurística.
-    
-    Complexidade: O(n log n)
-    """
+
     sol = Solution(instance)
     
     # Ordena por razão valor/peso DECRESCENTE
@@ -177,35 +78,7 @@ def greedy_ratio(instance):
 
 
 def greedy_random(instance, alpha=0.3):
-    """
-    Heurística Gulosa Aleatorizada (Semi-Greedy / GRASP Construction).
-    
-    ESTRATEGIA: "Escolho entre os melhores, mas com aleatoriedade!"
-    
-    Em vez de sempre pegar o "melhor" item, escolhe aleatoriamente
-    entre os melhores candidatos (Lista Restrita de Candidatos - RCL).
-    
-    CONCEITO: Esta aleatoriedade controlada permite gerar
-    soluções DIFERENTES a cada execução, o que é essencial
-    para metaheurísticas como GRASP.
-    
-    Parâmetros:
-    -----------
-    instance : KnapsackInstance
-        Instância do problema.
-    alpha : float
-        Parâmetro de aleatoriedade (0 a 1):
-        - alpha=0: Totalmente guloso (sem aleatoriedade)
-        - alpha=1: Totalmente aleatório
-        - Valor recomendado: 0.2 a 0.4
-    
-    Retorna:
-    --------
-    Solution
-        Solução construída pela heurística.
-    
-    Complexidade: O(n²) - pois recalcula candidatos a cada inserção
-    """
+
     sol = Solution(instance)
     
     # Lista de itens ainda não decididos
@@ -250,40 +123,9 @@ def greedy_random(instance, alpha=0.3):
     return sol
 
 
-# =====================================================
-# HEURÍSTICAS DE MELHORIA (Busca Local)
-# =====================================================
 
 def local_search_1flip(solution):
-    """
-    Busca Local com movimento 1-Flip.
-    
-    ESTRATEGIA: "E se eu inverter UM item?"
-    
-    Testa inverter cada item:
-    - Se item está na mochila → remove
-    - Se item está fora → adiciona (se couber)
-    
-    Retorna a PRIMEIRA melhoria encontrada (First Improvement).
-    
-    CONCEITO: Vizinhanca
-    -----------------------
-    A "vizinhanca" de uma solucao sao todas as solucoes que
-    podemos alcançar com UM movimento. Aqui, o movimento é
-    inverter um bit (0→1 ou 1→0).
-    
-    Parâmetros:
-    -----------
-    solution : Solution
-        Solução atual a ser melhorada.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor vizinho encontrado (ou a própria solução se não melhorou).
-    
-    Complexidade: O(n)
-    """
+
     best = solution.copy()
     
     for i in range(solution.instance.n):
@@ -301,24 +143,7 @@ def local_search_1flip(solution):
 
 
 def local_search_1flip_best(solution):
-    """
-    Busca Local 1-Flip com Best Improvement.
-    
-    Diferença para a anterior: testa TODOS os vizinhos
-    e retorna o MELHOR de todos.
-    
-    Parâmetros:
-    -----------
-    solution : Solution
-        Solução atual a ser melhorada.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor vizinho encontrado.
-    
-    Complexidade: O(n)
-    """
+
     best = solution.copy()
     
     for i in range(solution.instance.n):
@@ -333,33 +158,7 @@ def local_search_1flip_best(solution):
 
 
 def local_search_2swap(solution):
-    """
-    Busca Local com movimento 2-Swap (troca).
-    
-    ESTRATEGIA: "E se eu trocar um item dentro por um fora?"
-    
-    Remove um item que está na mochila e adiciona outro
-    que estava fora. Isso permite escapar de situações onde
-    1-flip não consegue melhorar.
-    
-    CONCEITO: Vizinhanca mais ampla
-    ----------------------------------
-    A vizinhança do 2-swap é MAIOR que a do 1-flip.
-    Isso significa mais chances de encontrar melhorias,
-    mas também mais tempo de computação.
-    
-    Parâmetros:
-    -----------
-    solution : Solution
-        Solução atual a ser melhorada.
-    
-    Retorna:
-    --------
-    Solution
-        Melhor vizinho encontrado.
-    
-    Complexidade: O(n²) - testa todos os pares
-    """
+
     best = solution.copy()
     
     # Identifica itens dentro e fora da mochila
@@ -384,29 +183,7 @@ def local_search_2swap(solution):
 
 
 def remove_worst(solution):
-    """
-    Remove o item com PIOR razão valor/peso.
-    
-    ESTRATEGIA: "Quem esta ocupando espaco sem merecer?"
-    
-    Identifica o item na mochila que tem a pior razão valor/peso
-    e o remove. Isso libera capacidade para potencialmente
-    adicionar itens melhores depois.
-    
-    ATENCAO: Esta heuristica sempre PIORA o valor imediato!
-    Ela deve ser usada como parte de uma estratégia maior
-    (como no Simulated Annealing) que permite pioras temporárias.
-    
-    Parâmetros:
-    -----------
-    solution : Solution
-        Solução atual.
-    
-    Retorna:
-    --------
-    Solution
-        Solução com um item a menos.
-    """
+
     inside = solution.get_selected_items()
     
     if not inside:
@@ -424,24 +201,7 @@ def remove_worst(solution):
 
 
 def fill_remaining(solution):
-    """
-    Tenta preencher a capacidade restante com itens viáveis.
-    
-    ESTRATEGIA: "Sobrou espaco? Vamos aproveitar!"
-    
-    Ordena itens não selecionados por razão valor/peso
-    e adiciona enquanto couber.
-    
-    Parâmetros:
-    -----------
-    solution : Solution
-        Solução atual.
-    
-    Retorna:
-    --------
-    Solution
-        Solução com capacidade melhor utilizada.
-    """
+
     result = solution.copy()
     outside = result.get_unselected_items()
     
@@ -456,11 +216,6 @@ def fill_remaining(solution):
         result.add_item(i)  # add_item já verifica viabilidade
     
     return result
-
-
-# =====================================================
-# CONJUNTO DE HEURÍSTICAS PARA HIPERHEURÍSTICA
-# =====================================================
 
 def get_constructive_heuristics():
     """
@@ -509,10 +264,6 @@ def get_all_heuristics_info():
         'fill_remaining': 'Preenche Capacidade',
     }
 
-
-# =====================================================
-# CÓDIGO DE TESTE
-# =====================================================
 if __name__ == "__main__":
     from instance import KnapsackInstance
     

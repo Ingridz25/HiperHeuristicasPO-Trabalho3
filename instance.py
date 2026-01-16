@@ -1,55 +1,15 @@
 """
-===========================================================
-MÓDULO: instance.py
-Representação e Leitura de Instâncias do Problema da Mochila
-===========================================================
-
-Este módulo contém a classe que representa uma instância do
-Problema da Mochila Binária (0/1 Knapsack Problem).
-
-ATUALIZAÇÃO: Agora suporta valores ótimos conhecidos para cálculo de GAP.
+Representação e leitura de instâncias do problema da mochila binária.
 """
 
 import re
 
 
 class KnapsackInstance:
-    """
-    Representa uma instância do Problema da Mochila Binária.
 
-    Atributos:
-    ----------
-    capacity : int
-        Capacidade máxima de peso que a mochila suporta.
-    weights : list[int]
-        Lista com o peso de cada item.
-    values : list[int]
-        Lista com o valor de cada item.
-    n : int
-        Número total de itens disponíveis.
-    optimal_value : int ou None
-        Valor ótimo conhecido (se disponível).
-    name : str
-        Nome da instância (extraído do arquivo).
-    """
 
     def __init__(self, capacity, weights, values, optimal_value=None, name="unnamed"):
-        """
-        Inicializa uma instância do problema.
 
-        Parâmetros:
-        -----------
-        capacity : int
-            Capacidade máxima da mochila em unidades de peso.
-        weights : list[int]
-            Lista de pesos dos itens.
-        values : list[int]
-            Lista de valores dos itens.
-        optimal_value : int, opcional
-            Valor ótimo conhecido (para comparação).
-        name : str, opcional
-            Nome da instância.
-        """
         self.capacity = capacity
         self.weights = weights
         self.values = values
@@ -74,36 +34,7 @@ class KnapsackInstance:
 
     @staticmethod
     def from_file(path):
-        """
-        Lê uma instância a partir de um arquivo.
 
-        Suporta dois formatos:
-
-        1. Formato OR-Library padrão:
-        ----------------------
-        n capacidade
-        valor peso
-        valor peso
-        ...
-
-        2. Formato com valor ótimo (comentário):
-        ----------------------
-        # optimal: 9147
-        n capacidade
-        valor peso
-        valor peso
-        ...
-
-        Parâmetros:
-        -----------
-        path : str
-            Caminho para o arquivo da instância.
-
-        Retorna:
-        --------
-        KnapsackInstance
-            Objeto representando a instância lida.
-        """
         import os
 
         # Extrai nome do arquivo
@@ -149,7 +80,7 @@ class KnapsackInstance:
 
             parts = lines[i].split()
             if len(parts) < 2:
-                raise ValueError(f"Linha {i+1} mal formatada: {lines[i]}")
+                raise ValueError(f"Linha {i + 1} mal formatada: {lines[i]}")
 
             v = int(parts[0])  # Valor do item
             w = int(parts[1])  # Peso do item
@@ -159,23 +90,7 @@ class KnapsackInstance:
         return KnapsackInstance(capacity, weights, values, optimal_value, name)
 
     def get_ratio(self, item_index):
-        """
-        Calcula a razão valor/peso de um item.
 
-        A razão valor/peso nos diz o "custo-benefício" de cada item.
-        Um item com razão alta nos dá muito valor por unidade de peso.
-
-        Parâmetros:
-        -----------
-        item_index : int
-            Índice do item (0 a n-1).
-
-        Retorna:
-        --------
-        float
-            Razão valor/peso do item.
-        """
-        # Evita divisão por zero
         if self.weights[item_index] == 0:
             return float('inf')
         return self.values[item_index] / self.weights[item_index]
@@ -240,9 +155,9 @@ class KnapsackInstance:
         """Imprime estatísticas formatadas."""
         stats = self.get_statistics()
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"ESTATÍSTICAS DA INSTÂNCIA: {stats['name']}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"  Número de itens:        {stats['n']}")
         print(f"  Capacidade:             {stats['capacity']}")
 
@@ -260,7 +175,7 @@ class KnapsackInstance:
         print(f"  Razão média:            {stats['avg_ratio']:.4f}")
         print(f"  Razão máxima:           {stats['max_ratio']:.4f}")
         print(f"  Razão mínima:           {stats['min_ratio']:.4f}")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
 
     def __str__(self):
         """Representação textual da instância (para debug)."""
@@ -361,6 +276,7 @@ if __name__ == "__main__":
 
     # Cleanup
     import os
+
     if os.path.exists("test_instance.txt"):
         os.remove("test_instance.txt")
 
