@@ -1,5 +1,27 @@
 """
-Módulo de experimentação e coleta de resultados.
+===========================================================
+MÓDULO: experiments.py
+Experimentação e Coleta de Resultados
+===========================================================
+
+Este módulo automatiza a execução de experimentos, coletando
+métricas de desempenho para análise comparativa.
+
+CONCEITO: Experimentacao Cientifica
+--------------------------------------
+Em Pesquisa Operacional, não basta implementar - precisamos
+VALIDAR experimentalmente. Isso inclui:
+
+1. Múltiplas execuções (para lidar com aleatoriedade)
+2. Diferentes instâncias (pequenas, médias, grandes)
+3. Métricas padronizadas (valor, tempo, gap)
+4. Reprodutibilidade (usar seeds fixas)
+
+Métricas coletadas:
+- Valor da solução
+- Tempo de execução
+- Gap em relação ao ótimo (se conhecido)
+- Número de iterações/chamadas
 """
 
 import time
@@ -22,11 +44,27 @@ from hyperheuristic import (
 )
 
 
-class ExperimentRunner:
+# =====================================================
+# CLASSE PRINCIPAL DE EXPERIMENTAÇÃO
+# =====================================================
 
+class ExperimentRunner:
+    """
+    Gerenciador de experimentos.
+    
+    Automatiza a execução de algoritmos em múltiplas instâncias,
+    coleta métricas e gera relatórios.
+    """
     
     def __init__(self, output_dir="results"):
-
+        """
+        Inicializa o gerenciador de experimentos.
+        
+        Parâmetros:
+        -----------
+        output_dir : str
+            Diretório para salvar resultados.
+        """
         self.output_dir = output_dir
         self.results = []
         
@@ -36,7 +74,28 @@ class ExperimentRunner:
     
     def run_single(self, algorithm_func, instance, algorithm_name, 
                    seed=None, **kwargs):
-
+        """
+        Executa um único experimento.
+        
+        Parâmetros:
+        -----------
+        algorithm_func : callable
+            Função do algoritmo a executar.
+        instance : KnapsackInstance
+            Instância do problema.
+        algorithm_name : str
+            Nome do algoritmo (para identificação).
+        seed : int
+            Seed para reprodutibilidade.
+        **kwargs : dict
+            Parâmetros adicionais para o algoritmo.
+        
+        Retorna:
+        --------
+        dict
+            Dicionário com métricas coletadas.
+        """
+        # Define seed para reprodutibilidade
         if seed is not None:
             random.seed(seed)
         
@@ -61,17 +120,50 @@ class ExperimentRunner:
             'timestamp': datetime.now().isoformat()
         }
         
-        # Adiciona gap se ótimo conhecido
+        # Adiciona gap se houver ótimo real ou referência
         if instance.optimal_value is not None:
-            gap = (instance.optimal_value - solution.value) / instance.optimal_value * 100
-            result['optimal_value'] = instance.optimal_value
+            ref_value = instance.optimal_value
+            ref_label = "optimal"
+        else:
+            ref_value = instance.reference_value
+            ref_label = "reference" if ref_value is not None else None
+
+        if ref_value is not None:
+            gap = (ref_value - solution.value) / ref_value * 100
+            result['reference_value'] = ref_value
+            result['reference_label'] = ref_label
             result['gap_percent'] = gap
         
         return result
     
     def run_multiple(self, algorithm_func, instance, algorithm_name,
                      num_runs=10, base_seed=42, **kwargs):
-
+        """
+        Executa múltiplas vezes um algoritmo na mesma instância.
+        
+        Por que multiplas execucoes?
+        Algoritmos com componente aleatório podem dar resultados
+        diferentes a cada execução. Executando várias vezes,
+        podemos calcular média, desvio padrão, etc.
+        
+        Parâmetros:
+        -----------
+        algorithm_func : callable
+            Função do algoritmo.
+        instance : KnapsackInstance
+            Instância do problema.
+        algorithm_name : str
+            Nome do algoritmo.
+        num_runs : int
+            Número de execuções.
+        base_seed : int
+            Seed base (incrementada a cada execução).
+        
+        Retorna:
+        --------
+        list[dict]
+            Lista de resultados.
+        """
         results = []
         
         for run in range(num_runs):
@@ -86,7 +178,25 @@ class ExperimentRunner:
         return results
     
     def run_comparison(self, instance, algorithms, num_runs=10, verbose=True):
-
+        """
+        Compara múltiplos algoritmos na mesma instância.
+        
+        Parâmetros:
+        -----------
+        instance : KnapsackInstance
+            Instância do problema.
+        algorithms : dict
+            Dicionário {nome: (função, kwargs)}.
+        num_runs : int
+            Execuções por algoritmo.
+        verbose : bool
+            Se True, imprime progresso.
+        
+        Retorna:
+        --------
+        list[dict]
+            Todos os resultados.
+        """
         all_results = []
         
         for name, (func, kwargs) in algorithms.items():
@@ -119,7 +229,16 @@ class ExperimentRunner:
         return variance ** 0.5
     
     def save_to_csv(self, filename="results.csv", results=None):
-
+        """
+        Salva resultados em arquivo CSV.
+        
+        Parâmetros:
+        -----------
+        filename : str
+            Nome do arquivo.
+        results : list
+            Lista de resultados (usa self.results se None).
+        """
         if results is None:
             results = self.results
         
@@ -149,7 +268,14 @@ class ExperimentRunner:
         print(f"[OK] Resultados salvos em: {filepath}")
     
     def generate_summary(self, results=None):
-
+        """
+        Gera resumo estatístico dos resultados.
+        
+        Retorna:
+        --------
+        dict
+            Estatísticas por algoritmo.
+        """
         if results is None:
             results = self.results
         
@@ -206,8 +332,19 @@ class ExperimentRunner:
         print("=" * 80)
 
 
-def create_test_algorithms():
+# =====================================================
+# FUNÇÕES DE CONVENIÊNCIA
+# =====================================================
 
+def create_test_algorithms():
+    """
+    Cria dicionário com todos os algoritmos para teste.
+    
+    Retorna:
+    --------
+    dict
+        Dicionário {nome: (função, parâmetros)}.
+    """
     heuristics = get_default_heuristics()
     
     return {
@@ -253,7 +390,25 @@ def create_test_algorithms():
 
 def run_full_experiment(instances, output_prefix="experiment", 
                         num_runs=10, verbose=True):
-
+    """
+    Executa experimento completo em múltiplas instâncias.
+    
+    Parâmetros:
+    -----------
+    instances : list[KnapsackInstance]
+        Lista de instâncias.
+    output_prefix : str
+        Prefixo para arquivos de saída.
+    num_runs : int
+        Execuções por algoritmo por instância.
+    verbose : bool
+        Se True, imprime progresso.
+    
+    Retorna:
+    --------
+    ExperimentRunner
+        Objeto com todos os resultados.
+    """
     runner = ExperimentRunner()
     algorithms = create_test_algorithms()
     
@@ -276,9 +431,28 @@ def run_full_experiment(instances, output_prefix="experiment",
     return runner
 
 
+# =====================================================
+# GERADOR DE INSTÂNCIAS
+# =====================================================
 
 def generate_random_instance(n, capacity_ratio=0.5, seed=None):
-
+    """
+    Gera uma instância aleatória do problema da mochila.
+    
+    Parâmetros:
+    -----------
+    n : int
+        Número de itens.
+    capacity_ratio : float
+        Capacidade como fração do peso total.
+    seed : int
+        Seed para reprodutibilidade.
+    
+    Retorna:
+    --------
+    KnapsackInstance
+        Instância gerada.
+    """
     if seed is not None:
         random.seed(seed)
     
@@ -293,7 +467,12 @@ def generate_random_instance(n, capacity_ratio=0.5, seed=None):
 
 
 def generate_correlated_instance(n, capacity_ratio=0.5, seed=None):
-
+    """
+    Gera instância com valores correlacionados aos pesos.
+    
+    Instancias correlacionadas sao mais dificeis!
+    Quando valor ≈ peso, é difícil decidir o que levar.
+    """
     if seed is not None:
         random.seed(seed)
     
@@ -307,6 +486,9 @@ def generate_correlated_instance(n, capacity_ratio=0.5, seed=None):
     return KnapsackInstance(capacity, weights, values)
 
 
+# =====================================================
+# CÓDIGO DE TESTE
+# =====================================================
 if __name__ == "__main__":
     print("=" * 60)
     print("TESTE DO MÓDULO DE EXPERIMENTAÇÃO")

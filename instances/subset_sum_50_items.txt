@@ -1,4 +1,4 @@
-# optimal: 10999
+# reference: 10999
 # type: subset_sum
 50 11605
 510 510

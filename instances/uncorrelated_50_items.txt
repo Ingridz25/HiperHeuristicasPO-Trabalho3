@@ -1,4 +1,4 @@
-# optimal: 16484
+# reference: 16484
 # type: uncorrelated
 50 12698
 558 797

@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import sys
@@ -21,13 +20,9 @@ from experiments import (
     ExperimentRunner, generate_random_instance, run_full_experiment
 )
 
+# DEMONSTRACAO COMPLETA
 
 def run_demo():
-    """
-    Executa demonstracao completa do sistema.
-    
-    Mostra todas as funcionalidades de forma didatica.
-    """
     print("=" * 70)
     print("   DEMONSTRACAO: HIPERHEURISTICA PARA O PROBLEMA DA MOCHILA")
     print("=" * 70)
@@ -146,6 +141,9 @@ def run_demo():
     print("ETAPA 5: HIPERHEURISTICAS")
     print("=" * 70)
     
+    print("\n[CONCEITO] Hiperheuristicas sao 'algoritmos de selecao de algoritmos'.")
+    print("           Elas aprendem quais heuristicas funcionam melhor e adaptam suas escolhas!")
+    
     heuristics_list = get_default_heuristics()
     
     print("\n   [ROLETA] Roleta Ponderada:")
@@ -259,6 +257,7 @@ def run_experiment(num_runs=10, sizes=None):
     
     return runner
 
+# PONTO DE ENTRADA
 
 def main():
     """Funcao principal."""
