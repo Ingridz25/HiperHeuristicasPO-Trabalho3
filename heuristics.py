@@ -1,13 +1,9 @@
-"""
-Heurísticas construtivas e de melhoria para o problema da mochila.
-"""
-
 import random
 from solution import Solution
 
+# HEURÍSTICAS CONSTRUTIVAS
 
 def greedy_value(instance):
-
     sol = Solution(instance)
     
     # Ordena índices dos itens por valor DECRESCENTE
@@ -34,7 +30,6 @@ def greedy_value(instance):
 
 
 def greedy_weight(instance):
-
     sol = Solution(instance)
     
     # Ordena por peso CRESCENTE (mais leves primeiro)
@@ -56,7 +51,6 @@ def greedy_weight(instance):
 
 
 def greedy_ratio(instance):
-
     sol = Solution(instance)
     
     # Ordena por razão valor/peso DECRESCENTE
@@ -78,7 +72,6 @@ def greedy_ratio(instance):
 
 
 def greedy_random(instance, alpha=0.3):
-
     sol = Solution(instance)
     
     # Lista de itens ainda não decididos
@@ -122,10 +115,9 @@ def greedy_random(instance, alpha=0.3):
     sol.evaluate()
     return sol
 
-
+# HEURÍSTICAS DE MELHORIA (Busca Local)
 
 def local_search_1flip(solution):
-
     best = solution.copy()
     
     for i in range(solution.instance.n):
@@ -143,7 +135,6 @@ def local_search_1flip(solution):
 
 
 def local_search_1flip_best(solution):
-
     best = solution.copy()
     
     for i in range(solution.instance.n):
@@ -151,14 +142,11 @@ def local_search_1flip_best(solution):
         candidate.flip_item(i)
         
         if candidate.is_feasible() and candidate.value > best.value:
-            best = candidate
-            # Não retorna aqui - continua testando todos
-    
+            best = candidate    
     return best
 
 
 def local_search_2swap(solution):
-
     best = solution.copy()
     
     # Identifica itens dentro e fora da mochila
@@ -183,7 +171,6 @@ def local_search_2swap(solution):
 
 
 def remove_worst(solution):
-
     inside = solution.get_selected_items()
     
     if not inside:
@@ -201,7 +188,6 @@ def remove_worst(solution):
 
 
 def fill_remaining(solution):
-
     result = solution.copy()
     outside = result.get_unselected_items()
     
@@ -216,6 +202,8 @@ def fill_remaining(solution):
         result.add_item(i)  # add_item já verifica viabilidade
     
     return result
+
+# CONJUNTO DE HEURÍSTICAS PARA HIPERHEURÍSTICA
 
 def get_constructive_heuristics():
     """
@@ -264,6 +252,7 @@ def get_all_heuristics_info():
         'fill_remaining': 'Preenche Capacidade',
     }
 
+# CÓDIGO DE TESTE
 if __name__ == "__main__":
     from instance import KnapsackInstance
     

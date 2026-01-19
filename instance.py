@@ -1,17 +1,15 @@
-
 import re
 
 
 class KnapsackInstance:
-
-
-    def __init__(self, capacity, weights, values, optimal_value=None, name="unnamed"):
-
+    def __init__(self, capacity, weights, values, optimal_value=None,
+                 reference_value=None, name="unnamed"):
         self.capacity = capacity
         self.weights = weights
         self.values = values
         self.n = len(weights)
         self.optimal_value = optimal_value
+        self.reference_value = reference_value
         self.name = name
 
         # Validação básica dos dados
@@ -44,15 +42,19 @@ class KnapsackInstance:
         lines = [line.strip() for line in lines if line.strip()]
 
         optimal_value = None
+        reference_value = None
         start_line = 0
 
         # Procura por valor ótimo em comentários
         for i, line in enumerate(lines):
             if line.startswith('#'):
                 # Tenta extrair valor ótimo
-                match = re.search(r'optimal[:\s]+(\d+)', line, re.IGNORECASE)
-                if match:
-                    optimal_value = int(match.group(1))
+                match_opt = re.search(r'optimal[:\s]+(\d+)', line, re.IGNORECASE)
+                if match_opt:
+                    optimal_value = int(match_opt.group(1))
+                match_ref = re.search(r'reference[:\s]+(\d+)', line, re.IGNORECASE)
+                if match_ref:
+                    reference_value = int(match_ref.group(1))
                 start_line = i + 1
             else:
                 # Primeira linha sem # é onde começa a instância
@@ -77,27 +79,33 @@ class KnapsackInstance:
 
             parts = lines[i].split()
             if len(parts) < 2:
-                raise ValueError(f"Linha {i + 1} mal formatada: {lines[i]}")
+                raise ValueError(f"Linha {i+1} mal formatada: {lines[i]}")
 
             v = int(parts[0])  # Valor do item
             w = int(parts[1])  # Peso do item
             values.append(v)
             weights.append(w)
 
-        return KnapsackInstance(capacity, weights, values, optimal_value, name)
+        return KnapsackInstance(
+            capacity, weights, values,
+            optimal_value=optimal_value,
+            reference_value=reference_value,
+            name=name
+        )
 
     def get_ratio(self, item_index):
-
         if self.weights[item_index] == 0:
             return float('inf')
         return self.values[item_index] / self.weights[item_index]
 
     def save_to_file(self, path, include_optimal=True):
-
         with open(path, 'w', encoding='utf-8') as f:
             # Comentário com valor ótimo (se conhecido)
-            if include_optimal and self.optimal_value is not None:
-                f.write(f"# optimal: {self.optimal_value}\n")
+            if include_optimal:
+                if self.optimal_value is not None:
+                    f.write(f"# optimal: {self.optimal_value}\n")
+                elif self.reference_value is not None:
+                    f.write(f"# reference: {self.reference_value}\n")
 
             # Nome da instância
             if self.name != "unnamed":
@@ -111,14 +119,6 @@ class KnapsackInstance:
                 f.write(f"{self.values[i]} {self.weights[i]}\n")
 
     def get_statistics(self):
-        """
-        Retorna estatísticas da instância.
-
-        Retorna:
-        --------
-        dict
-            Dicionário com estatísticas.
-        """
         total_value = sum(self.values)
         total_weight = sum(self.weights)
 
@@ -129,6 +129,7 @@ class KnapsackInstance:
             'n': self.n,
             'capacity': self.capacity,
             'optimal_value': self.optimal_value,
+            'reference_value': self.reference_value,
             'total_value': total_value,
             'total_weight': total_weight,
             'avg_value': total_value / self.n,
@@ -140,17 +141,18 @@ class KnapsackInstance:
         }
 
     def print_statistics(self):
-        """Imprime estatísticas formatadas."""
         stats = self.get_statistics()
 
-        print(f"\n{'=' * 60}")
+        print(f"\n{'='*60}")
         print(f"ESTATÍSTICAS DA INSTÂNCIA: {stats['name']}")
-        print(f"{'=' * 60}")
+        print(f"{'='*60}")
         print(f"  Número de itens:        {stats['n']}")
         print(f"  Capacidade:             {stats['capacity']}")
 
         if stats['optimal_value'] is not None:
             print(f"  Valor ótimo:            {stats['optimal_value']}")
+        elif stats['reference_value'] is not None:
+            print(f"  Referência:             {stats['reference_value']}")
         else:
             print(f"  Valor ótimo:            Desconhecido")
 
@@ -163,11 +165,15 @@ class KnapsackInstance:
         print(f"  Razão média:            {stats['avg_ratio']:.4f}")
         print(f"  Razão máxima:           {stats['max_ratio']:.4f}")
         print(f"  Razão mínima:           {stats['min_ratio']:.4f}")
-        print(f"{'=' * 60}\n")
+        print(f"{'='*60}\n")
 
     def __str__(self):
-        """Representação textual da instância (para debug)."""
-        opt_str = f", optimal={self.optimal_value}" if self.optimal_value else ""
+        if self.optimal_value is not None:
+            opt_str = f", optimal={self.optimal_value}"
+        elif self.reference_value is not None:
+            opt_str = f", reference={self.reference_value}"
+        else:
+            opt_str = ""
         return (
             f"KnapsackInstance(name='{self.name}', n={self.n}, "
             f"capacity={self.capacity}{opt_str})"
@@ -176,10 +182,9 @@ class KnapsackInstance:
     def __repr__(self):
         return self.__str__()
 
-
+# FUNÇÕES AUXILIARES
 
 def load_all_instances_from_dir(directory="instances"):
-
     import os
 
     instances = []
@@ -208,7 +213,7 @@ def load_all_instances_from_dir(directory="instances"):
 
     return instances
 
-
+# CÓDIGO DE TESTE
 if __name__ == "__main__":
     print("=" * 60)
     print("TESTE DO MÓDULO instance.py")
@@ -246,7 +251,6 @@ if __name__ == "__main__":
 
     # Cleanup
     import os
-
     if os.path.exists("test_instance.txt"):
         os.remove("test_instance.txt")
 

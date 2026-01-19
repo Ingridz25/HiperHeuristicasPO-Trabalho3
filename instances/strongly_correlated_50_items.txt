@@ -1,4 +1,4 @@
-# optimal: 12341
+# reference: 12341
 # type: strongly_correlated
 50 12958
 544 534

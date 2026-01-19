@@ -1,4 +1,4 @@
-# optimal: 121608
+# reference: 121608
 # type: subset_sum
 500 128011
 107 107

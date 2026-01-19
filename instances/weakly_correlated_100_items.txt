@@ -1,4 +1,4 @@
-# optimal: 28524
+# reference: 28524
 # type: weakly_correlated
 100 27523
 433 495

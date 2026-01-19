@@ -1,7 +1,3 @@
-"""
-Metaheurísticas para o problema da mochila.
-"""
-
 import random
 import math
 from solution import Solution, create_random_solution
@@ -12,8 +8,8 @@ from heuristics import (
 )
 
 
+# HILL CLIMBING COM REINÍCIO ALEATÓRIO
 def hill_climbing(initial_solution, max_iterations=100, verbose=False):
-
     current = initial_solution.copy()
     
     for iteration in range(max_iterations):
@@ -32,7 +28,6 @@ def hill_climbing(initial_solution, max_iterations=100, verbose=False):
 
 
 def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbose=False):
-
     best_overall = None
     
     for restart in range(num_restarts):
@@ -54,6 +49,7 @@ def hill_climbing_restart(instance, num_restarts=10, max_iter_per_run=100, verbo
     
     return best_overall
 
+# SIMULATED ANNEALING
 
 def simulated_annealing(instance, 
                         initial_temp=1000, 
@@ -61,7 +57,6 @@ def simulated_annealing(instance,
                         min_temp=1,
                         iterations_per_temp=50,
                         verbose=False):
-
     # Solução inicial: usa heurística gulosa para ter bom ponto de partida
     current = greedy_ratio(instance)
     
@@ -129,7 +124,6 @@ def simulated_annealing(instance,
 
 
 def generate_neighbor(solution):
-
     neighbor = solution.copy()
     
     # Escolhe tipo de movimento
@@ -158,10 +152,9 @@ def generate_neighbor(solution):
     
     return neighbor
 
-
+# GRASP (Greedy Randomized Adaptive Search Procedure)
 
 def grasp(instance, max_iterations=100, alpha=0.3, verbose=False):
-
     best = None
     
     for iteration in range(max_iterations):
@@ -181,9 +174,9 @@ def grasp(instance, max_iterations=100, alpha=0.3, verbose=False):
     
     return best
 
+# FUNÇÃO AUXILIAR: Wrapper para Experimentação
 
 def run_metaheuristic(name, instance, **kwargs):
-
     if name == 'sa' or name == 'simulated_annealing':
         return simulated_annealing(instance, **kwargs)
     
@@ -196,7 +189,7 @@ def run_metaheuristic(name, instance, **kwargs):
     else:
         raise ValueError(f"Metaheurística desconhecida: {name}")
 
-
+# CÓDIGO DE TESTE
 if __name__ == "__main__":
     from instance import KnapsackInstance
     
